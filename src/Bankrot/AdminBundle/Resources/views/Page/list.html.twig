@@ -1,0 +1,52 @@
+{% extends "BankrotAdminBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb well">
+        <li><a href="{{ path('admin_main') }}">Домой</a> <span class="divider"></span></li>
+        <li class="active"><a href="{{ path('admin_page_list') }}">Страницы</a> <span class="divider"></span></li>
+        <div style="float: right">
+            <a href="{{ path('admin_page_add') }}">Добавить</a> <span class="divider"></span>
+        </div>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="well">
+        <table class="table">
+            <tr>
+                <th>№</th>
+                <th>Заголовок</th>
+                <th></th>
+                <th>Статус</th>
+                <th class="setting">Инструменты</th>
+            </tr>
+            {% for item in pagination %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.title }}</td>
+                    <td></td>
+                    <td>{{ item.enabledStr }}</td>
+                    <td class="setting">
+                        {% spaceless %}
+                        <a href="{{ path('admin_page_edit',{'id' : item.id}) }}">
+                            <button type="button" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                        </a>
+                            &nbsp;
+                            &nbsp;
+                        <a href="{{ path('admin_page_remove',{'id' : item.id}) }}">
+                            <button type="button" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </a>
+                        {% endspaceless %}
+                    </td>
+                </tr>
+            {% endfor%}
+        </table>
+        <nav>
+            {{ knp_pagination_render(pagination) }}
+        </nav>
+    </div>
+{% endblock %}

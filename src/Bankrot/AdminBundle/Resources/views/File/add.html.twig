@@ -1,0 +1,10 @@
+{% extends "BankrotAdminBundle::mini_layout.html.twig" %}
+
+{% block content %}
+    <div class="">
+        Добавить файл:
+        <form method="POST" enctype="multipart/form-data">
+            {{ form_widget(form) }}
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,183 @@
+{% extends "BankrotSiteBundle::layout.html.twig" %}
+
+
+{% block header %}
+    <title>{{ question.title }}</title>
+    {#<META NAME="Keywords" CONTENT="{{ page.keywords | raw}}">#}
+    <META NAME="Description" CONTENT="{{ theme.body  | raw }}">
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="content">
+        <h1 >{{ question.title  | raw }}</h1>
+        <br />
+        <div>
+            {{ question.body | raw }}
+        </div>
+        <br />
+        {% for a in answers %}
+            <div class="forum-answer-item">
+                <table>
+                    <tr {{ a.author.roles[0] == 'ROLE_ADMIN' or a.author.roles[0] == 'ROLE_SUPER_ADMIN' ? 'style="background: #DDD"' : ''}}>
+                        <td class="forum-answer-author">
+                            <i style="font-size: 10px; color: #555555">Ответил</i><br />
+                            {#<i style="font-size: 10px; color: #555555">{{ a.created | date('d.m.Y') }}</i><br />#}
+                            {{ a.author }}
+                            <br />
+                            <div class="forum-answer-date">
+                                {{ a.created | date('d.m.Y H:i') }}
+                            </div>
+
+                        </td>
+                        <td rowspan="2" class="forum-answer-body">
+                            {{ a.body | raw }}
+                            {% if a.file %}
+                                <a href="{{ a.file.path }}" target="_blank">Скачать вложенный файл</a>
+                            {% endif %}
+                        </td>
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <td class="settings">
+                                <a href="{{ path('answers-delete',{ 'answerId' : a.id}) }}" class="nolink">
+                                    <img src="{{ asset('bundles/bankrotsite/images/delete.png') }}" style="width: 20px">&nbsp;&nbsp;&nbsp;
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                </table>
+            </div>
+        {% else %}
+            <b>Ответов нет</b><br /><br />
+        {% endfor %}
+        {% if is_granted("ROLE_SUBSCRIPTION") %}
+            <div class="form">
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form_widget(form) }}
+                </form>
+            </div>
+        {% else %}
+            {% if is_granted("ROLE_USER") %}
+                <a href="{{ path('subscription_index') }}"><button class="btn btn-default in" >Что бы ответить необходимо оформить подписку</button></a>
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}"><button class="btn btn-default in" >Пожалуйста, авторизуйтесь что бы ответить</button></a>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .forum-answer-item{
+            margin-bottom: 5px;
+            /*border: 1px solid #FFF;*/
+            /*padding: 10px;*/
+        }
+        .forum-answer-author{
+            width: 150px;
+            font-size: 14px;
+            border-right: 1px solid #525252;
+            padding: 0 10px;
+        }
+        .forum-answer-body{
+            width: 650px;
+            padding: 10px;
+        }
+        .forum-answer-date{
+            width: 150px;
+            font-size: 12px;
+            margin-top: 10px;
+            color: #525252;
+        }
+
+        #cke_blogbundle_forumquestion_body{
+            width: 590px;
+        }
+        .form{
+            /*display: none;*/
+        }
+        .form-group{
+            margin: 10px 0;
+        }
+        .forum-theme-body{
+            color: #444444;
+            font-size: 14px;
+        }
+        .forum-theme-title{
+            width: 685px;
+        }
+        .forum-theme-setting{
+            color: #444444;
+            font-size: 12px;
+            font-style: italic;
+            width: 200px;
+            text-align: right;
+        }
+        .forum-item table{
+            width: 100%;
+        }
+        .forum-item{
+            /*margin: 10px 0;*/
+            /*border-bottom: 1px dotted #991199;*/
+            padding: 10px 20px;
+            min-height: 30px;
+        {#background: url('{{ asset('bundles/wzcmain/images/forum_bg.png') }}');#}
+        }
+        .forum-item:hover{
+            background: rgba(186, 98, 149, 0.26);
+        }
+
+        .title{
+            /*color: #FFF;*/
+            font-size: 20px;
+        }
+        .title:hover{
+            text-decoration: underline;
+        }
+
+        .content{
+            padding: 50px 0 30px 0;
+            width: 900px;
+            margin: 0 auto;
+        }
+        h1{
+            /*color: #FFF;*/
+            font-size: 30px;
+            text-transform: uppercase;
+        }
+        input.styler{
+            width: 505px;
+        }
+        .table{
+            width: 600px;
+            margin: 0 auto ;
+        }
+        #bankrot_sitebundle_forumanswer_body{
+            width: 600px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/bankrotsite/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.showform').click(function(){
+                $('.form').fadeIn();
+            });
+
+            CKEDITOR.replace( 'bankrot_sitebundle_forumanswer_body', {
+                removePlugins : 'elementspath',
+                toolbarGroups : [
+                    { name: 'links' },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'colors' }
+                ],
+                width: 600,
+                height: 100
+            });
+        });
+    </script>
+{% endblock %}

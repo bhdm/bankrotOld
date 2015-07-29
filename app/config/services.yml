@@ -1,0 +1,49 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    twig.extension.intl:
+          class: Twig_Extensions_Extension_Intl
+          tags:
+            - { name: twig.extension }
+
+    gedmo.listener.timestampable:
+            class: Gedmo\Timestampable\TimestampableListener
+            tags:
+                - { name: doctrine.event_subscriber, connection: default }
+            calls:
+                - [ setAnnotationReader, [ @annotation_reader ] ]
+
+    app.form.type.lot:
+        class: Bankrot\SiteBundle\Form\Type\LotType
+        tags:
+            - { name: form.type, alias: lot }
+
+    app.menu_builder:
+        class: Bankrot\SiteBundle\Menu\MenuBuilder
+        arguments: [@knp_menu.factory]
+
+    app.main_menu:
+        class: Knp\Menu\MenuItem
+        factory: [@app.menu_builder, createMainMenu]
+        arguments: [@request_stack]
+        tags:
+            - { name: knp_menu.menu, alias: main }
+
+    app.lots_menu:
+        class: Knp\Menu\MenuItem
+        factory: [@app.menu_builder, createLotsMenu]
+        arguments: [@request_stack]
+        tags:
+            - { name: knp_menu.menu, alias: lots }
+
+    app.twig_extension:
+        class: Bankrot\SiteBundle\Twig\DayDiffExtension
+        public: false
+        tags:
+            - { name: twig.extension }

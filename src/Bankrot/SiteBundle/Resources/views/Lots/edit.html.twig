@@ -1,0 +1,219 @@
+{% extends 'BankrotSiteBundle::layout.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts filter='?closure'
+    'bundles/app/js/Lots/edit.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+    <h1 class="lead">
+        <a href="{{ path('lots', { id: lot.id }) }}" class="fa fa-chevron-circle-left"></a>
+        {{ lot.name }} (редактирование)
+    </h1>
+
+    <fieldset>
+        <div class="row">
+            <div class="col-sm-6">
+                {{ form_row(form.name) }}
+                <div class="row">
+                    <div class="col-sm-8">
+                        {{ form_row(form.category) }}
+                        {{ form_row(form.url) }}
+                        {{ form_row(form.phone) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">{{ form_row(form.price) }}</div>
+                </div>
+                {{ form_row(form.address) }}
+                {{ form_row(form.description) }}
+                <div class="row">
+                    <div class="col-sm-6">{{ form_row(form.livePeriod) }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-8">
+                        {{ form_row(form.lotStatus) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Ценообразование</legend>
+        <div class="row">
+            <div class="col-sm-3">{{ form_row(form.initialPrice) }}</div>
+            <div class="col-sm-3">
+                <div class="form-group {{ ((form.cutOffPrice.vars.errors|length) > 0
+                or (form.cutOffPricePercent.vars.errors|length) > 0) ? 'has-error' : '' }} ">
+                    <label class="control-label">Стоимость отсечения</label>
+                    {{ form_widget(form.cutOffPrice) }}
+                    {{ form_widget(form.cutOffPricePercent) }}
+                    {{ form_errors(form.cutOffPrice) }}
+                    {{ form_errors(form.cutOffPricePercent) }}
+                </div>
+                <div class="form-group">
+                    <select class="form-control" data-toggle-control-visible>
+                        <option {{ form.cutOffPrice.vars.value ? 'selected' : '' }}
+                                value="{{ form.cutOffPrice.vars.id }}">
+                            значение указано в рублях
+                        </option>
+                        <option {{ form.cutOffPricePercent.vars.value ? 'selected' : '' }}
+                                value="{{ form.cutOffPricePercent.vars.id }}">
+                            значение указано в процентах от начальной стоимости
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group {{ ((form.depositPrice.vars.errors|length) > 0
+                or (form.depositPricePercent.vars.errors|length) > 0
+                or (form.depositPricePercentCurrent.vars.errors|length) > 0) ? 'has-error' : '' }} ">
+                    <label class="control-label">Задаток</label>
+                    {{ form_widget(form.depositPrice) }}
+                    {{ form_widget(form.depositPricePercent) }}
+                    {{ form_widget(form.depositPricePercentCurrent) }}
+                    {{ form_errors(form.depositPrice) }}
+                    {{ form_errors(form.depositPricePercent) }}
+                    {{ form_errors(form.depositPricePercentCurrent) }}
+                </div>
+                <div class="form-group">
+                    <select class="form-control" data-toggle-control-visible>
+                        <option {{ form.depositPrice.vars.value ? 'selected' : '' }}
+                                value="{{ form.depositPrice.vars.id }}">
+                            значение указано в рублях
+                        </option>
+                        <option {{ form.depositPricePercent.vars.value ? 'selected' : '' }}
+                                value="{{ form.depositPricePercent.vars.id }}">
+                            значение указано в процентах от начальной стоимости
+                        </option>
+                        <option {{ form.depositPricePercentCurrent.vars.value ? 'selected' : '' }}
+                                value="{{ form.depositPricePercentCurrent.vars.id }}">
+                            значение указано в процентах от стоимости текущего периода
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Порядок снижения цены</legend>
+
+        {% for dropRule in lot.dropRules %}
+            <div class="row" data-root>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Период</label>
+                        <input class="form-control" value="{{ dropRule.period~dropRule.periodWork }}" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" disabled>
+                            <option>{{ dropRule.period ? 'значение указано в календарных днях' : 'значение указано в рабочих днях' }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Порядок снижения</label>
+                        <input class="form-control" value="{{ dropRule.order~dropRule.orderCurrent }}" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" disabled>
+                            <option>{{ dropRule.order ? 'значение указано в процентах от начальной стоимости' : 'значение указано в процентах от стоимости текущего периода' }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Период действия</label>
+                        <input class="form-control"
+                               value="{{ (dropRule.beginDate|date('d.m.Y'))~' - '~(dropRule.endDate|date('d.m.Y')) }}"
+                               disabled/>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+
+                        <div>
+                            <button
+                                    data-drop-rule-remove
+                                    data-lot-id="{{ lot.id }}"
+                                    data-drop-rule-id="{{ dropRule.id }}" class="btn btn-danger"><i
+                                        class="fa fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group {{ ((form.newDropRulePeriod.vars.errors|length) > 0
+                or (form.newDropRulePeriodWork.vars.errors|length) > 0) ? 'has-error': '' }}">
+                    <label>Период</label>
+                    {{ form_widget(form.newDropRulePeriod) }}
+                    {{ form_widget(form.newDropRulePeriodWork) }}
+                    {{ form_errors(form.newDropRulePeriod) }}
+                    {{ form_errors(form.newDropRulePeriodWork) }}
+                </div>
+                <div class="form-group">
+                    <select class="form-control" data-toggle-control-visible>
+                        <option {{ form.newDropRulePeriod.vars.value ? 'selected' : '' }}
+                                value="{{ form.newDropRulePeriod.vars.id }}">
+                            значение указано в календарных днях
+                        </option>
+                        <option {{ form.newDropRulePeriodWork.vars.value ? 'selected' : '' }}
+                                value="{{ form.newDropRulePeriodWork.vars.id }}">
+                            значение указано в рабочих днях
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group {{ ((form.newDropRuleOrder.vars.errors|length) > 0
+                or (form.newDropRuleOrderCurrent.vars.errors|length) > 0) ? 'has-error': '' }}">
+                    <label>Порядок снижения</label>
+                    {{ form_widget(form.newDropRuleOrder) }}
+                    {{ form_widget(form.newDropRuleOrderCurrent) }}
+                    {{ form_errors(form.newDropRuleOrder) }}
+                    {{ form_errors(form.newDropRuleOrderCurrent) }}
+                </div>
+                <div class="form-group">
+                    <select class="form-control" data-toggle-control-visible>
+                        <option {{ form.newDropRuleOrder.vars.value ? 'selected' : '' }}
+                                value="{{ form.newDropRuleOrder.vars.id }}">
+                            значение указано в процентах от начальной стоимости
+                        </option>
+                        <option {{ form.newDropRuleOrderCurrent.vars.value ? 'selected' : '' }}
+                                value="{{ form.newDropRuleOrderCurrent.vars.id }}">
+                            значение указано в процентах от стоимости текущего периода
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3">{{ form_row(form.newDropRuleLivePeriod) }}</div>
+        </div>
+    </fieldset>
+
+    <hr/>
+
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+    </div>
+
+    <div class="hidden">
+        {{ form_rest(form) }}
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
+

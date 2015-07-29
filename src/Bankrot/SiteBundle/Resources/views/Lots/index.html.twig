@@ -1,0 +1,123 @@
+{% extends 'BankrotSiteBundle::layout.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts filter='?closure'
+    'bundles/app/js/Lots/index.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        $('.table-filter').eq(0).on('click', 'a', function(){
+            var cssClass = $(this).data('filter'),
+                $tbl = $('.lots-list tbody');
+            $('.hidden', $tbl).removeClass('hidden');
+            if (cssClass != undefined) {
+                $tbl.find('tr:not(".' + cssClass + '")').addClass('hidden');
+            }
+            console.log(cssClass);
+        });
+    </script>
+{% endblock %}
+
+{% block content_wrapper %}
+    <div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:50px">
+        <div class="container">
+            {{ knp_menu_render('lots', { currentClass: 'active' }) }}
+            <div class="navbar-right">
+                <a href="{{ path('lots_add') }}" class="btn btn-primary navbar-btn">Добавить лот</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <p class="lead">Отслеживаемые лоты</p>
+                {% set targetPeriodLots = 0 %}
+                {% set controlPeriodLots = 0 %}
+                {% set reportingPeriodList = 0 %}
+
+                {% for lw in lots %}
+                    {% if lw.isTargetPeriod %}{% set targetPeriodLots = targetPeriodLots + 1 %}{% endif %}
+                    {% if lw.isControlPeriod %}{% set controlPeriodLots = controlPeriodLots + 1 %}{% endif %}
+                    {% if lw.isReportingPeriod %}{% set reportingPeriodList = reportingPeriodList + 1 %}{% endif %}
+                {% endfor %}
+                <p class="clearfix">
+                    <strong class="pull-left">Целевой период</strong>
+                    <span class="pull-right">{{ targetPeriodLots }} лотов</span>
+                </p>
+                <p class="clearfix">
+                    <strong class="pull-left">Контрольный период</strong>
+                    <span class="pull-right">{{ controlPeriodLots }} лотов</span>
+                </p>
+                <p class="clearfix">
+                    <strong class="pull-left">Истекший период</strong>
+                    <span class="pull-right">{{ reportingPeriodList }} лотов</span>
+                </p>
+            </div>
+        </div>
+
+        <div id="calendar"></div>
+        <div class="search-form">
+            <form action="{{ path('lots_list') }}" class="form-inline">
+                <div class="form-group">
+                    <input name="search"
+                           type="text"
+                           class="form-control col-sm-10"
+                           id="search-field"
+                           placeholder="поиск"
+                           value="{{ app.request.get('search') }}"
+                    >
+                </div>
+                <button type="submit" class="btn btn-default">найти</button>
+            </form>
+        </div>
+        <div class="table-filter text-right">
+            <ul class="list-inline list-unstyled">
+                <li><a href="#">Все</a></li>
+                <li class="soon"><a href="#" data-filter="soon">Целевые</a></li>
+                <li class="ready"><a href="#" data-filter="ready">Контрольные</a></li>
+                <li class="late"><a href="#" data-filter="late">Истекшие</a></li>
+            </ul>
+        </div>
+        <table class="table table-hover lots-list">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Категория</th>
+                <th>Планируемая дата покупки</th>
+                <th>Планируемая стоимость покупки</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for lw in lots %}
+                {% if lw.getDay.date|day_diff == 0 %}
+                    {% set marker_class = "ready" %}
+                {% elseif lw.getDay.date|day_diff < 5 %}
+                    {% set marker_class = "soon" %}
+                {% elseif lw.getLot.getEndDate.date|day_diff <= 0 %}
+                    {% set marker_class = "late" %}
+                {% else %}
+                    {% set marker_class = "" %}
+                {% endif %}
+                <tr data-route="{{ path('lots', { id: lw.lot.id }) }}" class="{{ marker_class }}">
+                    <td><span class="img-circle status-marker"></span>{{ lw.lot.name }}[{{ lw.getDay.date|day_diff }}][{{ lw.getLot.getEndDate.date|day_diff }}][{{ marker_class }}]</td>
+                    <td>{{ lw.lot.category }}</td>
+                    <td>{{ lw.day|date('d.m.Y') }}</td>
+                    <td>{{ lw.price }}</td>
+                    <td>{{ lw.getLot().getLotStatus().getName()}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

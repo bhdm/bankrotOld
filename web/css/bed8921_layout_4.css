@@ -1,0 +1,33 @@
+
+body {
+    background-color: rgb(241, 242, 246);
+}
+
+.container {
+    max-width: 900px;
+}
+
+main {
+    padding: 60px 0;
+}
+
+[data-route] td {
+    cursor: pointer;
+}
+.status-marker {
+    display: inline-block;
+    height: 8px;
+    width: 8px;
+}
+.soon .status-marker {
+    background-color: yellow;
+}
+.ready .status-marker {
+    background-color: green;
+}
+.late .status-marker {
+    background-color: red;
+}
+.soon a {color: yellow;}
+.ready a {color: green;}
+.late a {color: red;}

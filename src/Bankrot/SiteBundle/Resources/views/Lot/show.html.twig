@@ -1,0 +1,73 @@
+<ul class="nav nav-tabs">
+    {% if lot.attrs|length %}
+        <li class="active">
+            <a data-toggle="tab" href="#attrs">Сводная информация</a>
+        </li>
+    {% endif %}
+
+    {% if lot.dates|length %}
+        <li>
+            <a data-toggle="tab" href="#dates">Даты</a>
+        </li>
+    {% endif %}
+
+    {% if lot.costs|length %}
+        <li>
+            <a data-toggle="tab" href="#costs">Цены</a>
+        </li>
+    {% endif %}
+
+    {% if lot.contents|length %}
+        <li>
+            <a data-toggle="tab" href="#contents">Детали</a>
+        </li>
+    {% endif %}
+</ul>
+
+<div class="tab-content">
+    <br/>
+
+    {% if lot.attrs|length %}
+        <div class="tab-pane active" id="attrs">
+            {% for attr in lot.attrs %}
+                <p>
+                    <strong>{{ attr.group.name }}:</strong><br/>
+                    {{ attr.val }}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if lot.dates|length %}
+        <div class="tab-pane" id="dates">
+            {% for attr in lot.dates %}
+                <p>
+                    <strong>{{ attr.group.name }}:</strong><br/>
+                    {{ attr.val|date }}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if lot.costs|length %}
+        <div class="tab-pane" id="costs">
+            {% for attr in lot.costs %}
+                <p>
+                    <strong>{{ attr.group.name }}:</strong><br/>
+                    {{ attr.val|number_format(2, ',', ' ') }} <i class="fa fa-rub"></i>
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if lot.contents|length %}
+        <div class="tab-pane" id="contents">
+            {% for attr in lot.contents %}
+                <p>
+                    <strong>{{ attr.group.name }}:</strong><br/>
+                    {{ attr.val|nl2br }}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

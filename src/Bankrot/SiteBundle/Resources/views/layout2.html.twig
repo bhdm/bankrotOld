@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="{{ _charset }}"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>{% block title '' %}</title>
+
+    {% block stylesheets %}
+        {% stylesheets filter='cssrewrite, ?yui_css'
+        'vendor/Bootflat/css/bootstrap.min.css'
+        'vendor/Bootflat/css/site.min.css'
+        'vendor/fontawesome/css/font-awesome.min.css'
+        'bundles/app/css/layout.css' %}
+        <link rel="stylesheet" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+    {% endblock %}
+</head>
+
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="/" class="navbar-brand"><i class="fa fa-home"></i></a>
+        </div>
+        <div class="navbar-left">
+            {{ knp_menu_render('main', { currentClass: 'active' }) }}
+        </div>
+    </div>
+</nav>
+
+{% block content_wrapper %}
+<main class="container">
+    {% block content '' %}
+</main>
+{% endblock %}
+
+<div class="footer">
+    <footer class="container">
+        <p class="footer-copyright text-center">&copy; Организация, 2015. Все права защищены</p>
+    </footer>
+</div>
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+
+    {% javascripts filter='?closure'
+    'vendor/Bootflat/js/jquery-1.10.1.min.js'
+    'vendor/Bootflat/js/site.min.js'
+    'vendor/Bootflat/bootflat/js/icheck.min.js'
+    'vendor/Bootflat/bootflat/js/jquery.fs.selecter.min.js'
+    'vendor/Bootflat/bootflat/js/jquery.fs.stepper.min.js'
+    'vendor/jquery.inputmask/dist/jquery.inputmask.bundle.min.js'
+    'bundles/app/js/layout.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "BankrotAdminBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb well">
+        <li><a href="{{ path('admin_main') }}">Домой</a> <span class="divider"></span></li>
+        <li><a href="{{ path('admin_forumanswer_list') }}">Ответы на форуме</a> <span class="divider"></span></li>
+        <li class="active">Изменение<span class="divider"></span></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="well">
+        <form method="POST">
+            {{ form_widget(form) }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .frame{
+            width: 100%;
+        }
+    </style>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            CKEDITOR.replace( 'bankrot_sitebundle_forumanswer_body', {
+                toolbarGroups : [
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+                    { name: 'links' },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'colors' }
+                ]
+            });
+        });
+    </script>
+{% endblock %}

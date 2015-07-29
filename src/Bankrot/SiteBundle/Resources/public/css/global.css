@@ -1,0 +1,22 @@
+body {
+    padding-top: 60px;
+}
+
+.navbar-right {
+    padding-right: 15px;
+}
+
+.table-hover [data-href] td {
+    cursor: pointer;
+}
+.nolink, .nolink:hover{
+    text-decoration: none;
+}
+.settings{
+    width: 35px;
+    text-align: right;
+}
+
+input[type="file"]{
+
+}

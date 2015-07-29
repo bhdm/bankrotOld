@@ -1,0 +1,27 @@
+{% extends "BankrotAdminBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb well">
+        <li><a href="{{ path('admin_main') }}">Домой</a> <span class="divider"></span></li>
+        <li><a href="{{ path('admin_user_list') }}">Пользователи</a> <span class="divider"></span></li>
+        <li class="active">Изменение<span class="divider"></span></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="well">
+        <form method="POST">
+            {{ form_widget(form) }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .frame{
+            width: 100%;
+        }
+    </style>
+
+{% endblock %}

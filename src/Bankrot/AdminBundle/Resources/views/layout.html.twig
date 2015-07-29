@@ -1,0 +1,64 @@
+<html>
+    <head>
+        {% block javascripts %}
+            <script src="{{ asset('bundles/bankrotadmin/js/jquery-1.11.1.min.js') }}"></script>
+            <script src="{{ asset('bundles/bankrotadmin/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('bundles/bankrotadmin/ckeditor/ckeditor.js') }}"></script>
+        {% endblock %}
+
+        {% block stylesheets %}
+            <link href="{{ asset('bundles/bankrotadmin/css/bootstrap.css') }}" rel="stylesheet">
+            <link href="{{ asset('bundles/bankrotadmin/css/bootstrap-theme.css') }}" rel="stylesheet">
+            {#<link href="{{ asset('bundles/bankrotadmin/ckeditor/contents.css') }}" rel="stylesheet">#}
+            <style>
+                .setting{
+                    text-align: right;
+                }
+            </style>
+        {% endblock %}
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-inverse" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">ПАНЕЛЬ <span class="text-danger">[ АДМИНИСТРАТОР ]</span></a>
+                    </div>
+                    <div class="navbar-right">
+                        <div class="collapse navbar-collapse">
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <ul class="nav navbar-nav">
+                                    <li><a href="{{ path('home') }}" target="_blank">На сайт</a></li>
+                                    <li><a href="{{ path('fos_user_security_logout') }}">Выйти</a></li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <div class="container">
+            {% block alert %}{% endblock %}
+            {#<div class="alert alert-success" role="alert"></div>#}
+            {#<div class="alert alert-info" role="alert"></div>#}
+            {#<div class="alert alert-warning" role="alert"></div>#}
+            {#<div class="alert alert-danger" role="alert"></div>#}
+            
+            <div class="row">
+                <div class="col-md-3">
+                    {% block menu %}
+                        {% include 'BankrotAdminBundle::menu.html.twig' %}
+                    {% endblock %}
+                </div>
+                <div class="col-md-9">
+                    {% block breadcrumb %}{% endblock %}
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+
+
+        {% block body %}{% endblock %}
+    </body>
+</html>

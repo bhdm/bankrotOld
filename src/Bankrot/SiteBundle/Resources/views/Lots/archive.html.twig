@@ -1,0 +1,47 @@
+{% extends 'BankrotSiteBundle::layout.html.twig' %}
+
+{% block content_wrapper %}
+    <div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:50px">
+        <div class="container">
+            {{ knp_menu_render('lots', { currentClass: 'active' }) }}
+            <div class="navbar-right">
+                <a href="{{ path('lots_add') }}" class="btn btn-primary navbar-btn">Добавить лот</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Статус</th>
+                        <th>Рыночная стоимость</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for lot in lots %}
+                        <tr data-route="{{ path('lots', { id: lot.id }) }}">
+                            <td>{{ lot.name }}</td>
+                            <td>{{ lot.category }}</td>
+                            <td>{{ lot.lotStatus }}</td>
+                            <td>{{ lot.price }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

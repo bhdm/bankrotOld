@@ -1,0 +1,39 @@
+<html>
+    <head>
+        {% block javascripts %}
+            <script src="{{ asset('bundles/bankrotadmin/js/jquery-1.11.1.min.js') }}"></script>
+            <script src="{{ asset('bundles/bankrotadmin/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('bundles/bankrotadmin/ckeditor/ckeditor.js') }}"></script>
+            <script>
+                $(document).ready(function(){
+                    $('.alignRight').click(function(){
+                        window.location.href = '{{ app.request.headers.get('referer') }}';
+                    });
+                });
+            </script>
+        {% endblock %}
+
+        {% block stylesheets %}
+            <link href=" {{ asset('bundles/bankrotadmin/css/bootstrap.min.css') }}" rel="stylesheet">
+            <style>
+                .setting{
+                    text-align: right;
+                }
+                body{
+                    background: #f5f5f5;
+                }
+                .alignRight{
+                    float: right;
+                }
+            </style>
+        {% endblock %}
+    </head>
+    <body>
+        <div class="row" style="width: 800px">
+            <div class="col-md-11">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

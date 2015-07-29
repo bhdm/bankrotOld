@@ -1,0 +1,25 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block page_header %}Восстановление пароля{% endblock %}
+
+{% block fos_user_content %}
+    <p>
+        {{ 'resetting.check_email'|trans({'%email%': email}) }}
+    </p>
+
+    <p>
+        Вы будете перемещены на <a href="{{ path('home') }}">главную страницу</a> через
+        <span data-timer="5" data-timer-id="#timer-target" data-timer-href="{{ path('home') }}">
+            <span id="timer-target">5 секунд</span>
+        </span>
+    </p>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts filter='?closure' 'bundles/bankrotsite/js/timer.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

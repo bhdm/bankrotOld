@@ -1,0 +1,159 @@
+{% extends "BankrotSiteBundle::layout.html.twig" %}
+
+
+{% block header %}
+    <title>{{ theme.title }}</title>
+    {#<META NAME="Keywords" CONTENT="{{ page.keywords | raw}}">#}
+    <META NAME="Description" CONTENT="{{ theme.body  | raw }}">
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="content">
+        <h1>{{ theme.title  | raw }}</h1>
+        <br />
+        <div>
+            {{ theme.body | raw }}
+        </div>
+        <br />
+        {% if is_granted("ROLE_SUBSCRIPTION") %}
+            <button class="btn btn-default showform"><b>+</b> Добавить вопрос</button>
+            <br />
+            <div class="form">
+                <form method="POST">
+                    {{ form_widget(form) }}
+                </form>
+            </div>
+        {% else %}
+            {% if is_granted("ROLE_USER") %}
+                <a href="{{ path('subscription_index') }}"><button class="btn btn-default in" >Что бы задать вопрос необходимо оформить подписку</button></a>
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}"><button class="btn btn-default in" >Пожалуйста, авторизуйтесь для создания вопроса</button></a>
+            {% endif %}
+        {% endif %}
+        <br />
+        {% for q in questions %}
+            <div class="forum-item">
+                <table>
+                    <tr>
+                        <td class="forum-theme-title"><a href="{{ path('forum_answers',{ 'themeId' : theme.id, 'questionId' : q.id  }) }}" class="title">{{ q.title |raw }}</a></td>
+                        <td rowspan="2" class="forum-theme-setting">
+                            <b>{{ q.answers | length }}</b> Ответов <br />
+                            {% if q.answers | length > 0 %}
+                                {% set lastItem = q.answers | last %}
+                                Последний ответ - <b>{{ lastItem.created | date("d.m.Y") }}</b>
+                            {% endif %}
+                        </td>
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <td rowspan="2" class="settings">
+                                <a href="{{ path('questions-delete',{ 'questionId' : q.id}) }}" class="nolink">
+                                    &nbsp;<img src="{{ asset('bundles/bankrotsite/images/delete.png') }}" style="width: 20px">&nbsp;
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="forum-theme-body">{{ (q.body|length > 150 ? q.body | raw | slice(0, 150) ~ '...' : q.body) | raw  }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% else %}
+            <h2 style="display: block; text-align: center">В данной теме вопросов не найдено</h2>
+        {% endfor %}
+
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #cke_blogbundle_forumquestion_body{
+            width: 590px;
+        }
+        .form{
+            display: none;
+        }
+        .form-group{
+            margin: 10px 0;
+        }
+        .forum-theme-body{
+            /*color: #CCC;*/
+            font-size: 14px;
+            padding: 0 10px;
+        }
+        .forum-theme-title{
+            width: 685px;
+            padding: 0 10px;
+        }
+        .forum-theme-setting{
+            /*color: #CCC;*/
+            font-size: 12px;
+            font-style: italic;
+        }
+        .forum-item table{
+            width: 100%;
+        }
+        .forum-item {
+            margin: 10px 0;
+            /*border: 1px solid #FFF;*/
+            /*padding: 10px;*/
+            /*height: 55px;*/
+            /*border-radius: 3px;*/
+        {#background: url('{{ asset('bundles/wzcmain/images/forum_bg.png') }}');#}
+        }
+        .forum-item:hover{
+            /*background: rgba(186, 98, 149, 0.26);*/
+        }
+
+        .title{
+            /*color: #FFF;*/
+            font-size: 20px;
+        }
+        .title:hover{
+            text-decoration: underline;
+        }
+
+        .content{
+            padding: 50px 0 30px 0;
+            width: 900px;
+            margin: 0 auto;
+        }
+        h1{
+            /*color: #FFF;*/
+            font-size: 30px;
+            text-transform: uppercase;
+        }
+        input.styler{
+            width: 505px;
+        }
+        .table{
+            width: 600px;
+            margin: 0 auto ;
+        }
+        #bankrot_sitebundle_forumquestion_title{
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/bankrotsite/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.showform').click(function(){
+                $('.form').fadeIn();
+            });
+            CKEDITOR.replace( 'bankrot_sitebundle_forumquestion_body', {
+                toolbarGroups : [
+                    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                    { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+                    { name: 'links' },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'colors' }
+                ]
+            });
+        });
+    </script>
+{% endblock %}

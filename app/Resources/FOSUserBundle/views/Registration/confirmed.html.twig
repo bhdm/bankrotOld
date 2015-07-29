@@ -1,0 +1,28 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block page_header %}Регистрация{% endblock %}
+
+{% block fos_user_content %}
+    <p>{{ 'registration.confirmed'|trans({'%username%': user.username}) }}</p>
+
+    {% if app.session is not empty %}
+        {% set targetUrl = app.session.get('_security.' ~ app.security.token.providerKey ~ '.target_path') %}
+        {% if targetUrl is not empty %}<p><a href="{{ targetUrl }}">{{ 'registration.back'|trans }}</a></p>{% endif %}
+    {% endif %}
+
+    <p>
+        Вы будете перемещены на <a href="{{ path('home') }}">главную страницу</a> через
+        <span data-timer="5" data-timer-id="#timer-target" data-timer-href="{{ path('home') }}">
+            <span id="timer-target">5 секунд</span>
+        </span>
+    </p>
+{% endblock fos_user_content %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts filter='?closure' 'bundles/bankrotsite/js/timer.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

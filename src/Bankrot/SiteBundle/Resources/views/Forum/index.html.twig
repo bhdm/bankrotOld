@@ -1,0 +1,133 @@
+{% extends "BankrotSiteBundle::layout.html.twig" %}
+
+
+{% block header %}
+
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="content">
+        <h1 class="page-header">ФОРУМ</h1>
+        <br />
+        {% if is_granted("ROLE_ADMIN") %}
+            <button class="btn btn-default showform"><b>+</b> Добавить тему</button>
+            <br />
+            <div class="form">
+                <form method="POST">
+                    {{ form_widget(form) }}
+                </form>
+            </div>
+        {% endif %}
+        {% for theme in themes %}
+            <div class="forum-item">
+                <table>
+                    <tr>
+                        <td class="forum-theme-title"><a href="{{ path('forum_questions',{ 'themeId' : theme.id }) }}" class="title">{{ theme.title }}</a></td>
+                        <td rowspan="2" class="forum-theme-setting">
+                            <b>{{ theme.questions | length }}</b> Вопросов
+                            <b>{{ theme.answers | length }}</b> Ответов <br />
+                            {% if theme.questions | length > 0 %}
+                                {% set lastItem = theme.questions | last %}
+                                Последний ответ - <b>{{ lastItem.created | date("d.m.Y") }}</b>
+                            {% endif %}
+                        </td>
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <td rowspan="2" class="settings">
+                                <a href="{{ path('theme-delete',{ 'themeId' : theme.id}) }}" class="nolink">
+                                    &nbsp;<img src="{{ asset('bundles/bankrotsite/images/delete.png') }}" style="width: 20px">&nbsp;
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="forum-theme-body">{{ theme.body | raw }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form{
+            display: none;
+        }
+        #cke_blogbundle_forumtheme_body{
+            width: 640px;
+        }
+        .form-group{
+            margin: 10px 0;
+        }
+        .forum-theme-body{
+            /*color: #CCC;*/
+            font-size: 14px;
+            padding: 0 10px;
+        }
+        .forum-theme-title{
+            width: 685px;
+            padding: 0 10px;
+        }
+        .forum-theme-setting{
+            /*color: #CCC;*/
+            font-size: 12px;
+            font-style: italic;
+        }
+        .forum-item table{
+            width: 100%;
+        }
+        .forum-item {
+            margin: 10px 0;
+        }
+        .forum-item:hover{
+            /*background: rgba(186, 98, 149, 0.26);*/
+        }
+        .forum-item table{
+            width: 100%;
+        }
+        .title{
+            /*color: #FFF;*/
+            font-size: 20px;
+        }
+        .title:hover{
+            text-decoration: underline;
+        }
+
+        .content{
+            padding: 50px 0 30px 0;
+            width: 900px;
+            margin: 0 auto;
+        }
+        h1{
+            /*color: #FFF;*/
+            /*font-size: 30px;*/
+            /*text-transform: uppercase;*/
+        }
+        input.styler{
+            width: 505px;
+        }
+        .table{
+            width: 600px;
+            margin: 0 auto ;
+        }
+        #bankrot_sitebundle_forumtheme_title{
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/bankrotsite/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.showform').click(function(){
+                $('.form').fadeIn();
+            });
+        });
+    </script>
+{% endblock %}

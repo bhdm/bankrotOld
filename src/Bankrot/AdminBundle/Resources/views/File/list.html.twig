@@ -1,0 +1,52 @@
+{% extends "BankrotAdminBundle::mini_layout.html.twig" %}
+
+
+{% block content %}
+    <div class="">
+        <ul class="breadcrumb">
+            <div style="float: right">
+                <a href="{{ path('admin_file_add') }}">Добавить файл</a> <span class="divider"></span>
+            </div>
+        </ul>
+        <table class="table">
+            <tr>
+                <th>Файл</th>
+                <th>путь</th>
+                <th></th>
+                <th class="setting"></th>
+            </tr>
+            {% for item in pagination %}
+                {% if item.file.path is defined %}
+                <tr>
+                    <td><img  class="img-list" src="{{ item.file.path }}" /></td>
+                    <td>http://{{ domain }}{{ item.file.path }}</td>
+                    <td></td>
+                    <td class="setting">
+                        {% spaceless %}
+                            <a href="{{ path('admin_file_remove',{'fileId' : item.id}) }}">
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </a>
+                        {% endspaceless %}
+                    </td>
+                </tr>
+                    {% endif %}
+            {% endfor%}
+        </table>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <style>
+        .img-list{
+            max-width: 50px;
+            max-height: 50px;
+        }
+    </style>
+{% endblock %}
